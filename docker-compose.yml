@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  # gitlab:
+  #   image: gitlab/gitlab-ce:latest
+  #   container_name: gitlab
+  #   ports:
+  #     - 8080:80
+  #   volumes:
+  #     - ./temp/gitlab:/etc/gitlab
+  #     - ./temp/gitlab:/var/log/gitlab
+  #     - ./temp/gitlab:/var/opt/gitlab
+  sonarqube:
+    image: sonarqube
+    container_name: sonarqube
+    ports:
+      - 9000:9000
+    volumes:
+      - ./temp/sonarqube/conf:/opt/sonarqube/conf
+      - ./temp/sonarqube/data:/opt/sonarqube/data
+      - ./temp/sonarqube/logs:/opt/sonarqube/logs
+      - ./temp/sonarqube/extensions:/opt/sonarqube/extensions
+    environment: 
+      sonar.jdbc.username: "postgres"
+      sonar.jdbc.password: "admin@01sonarqube"
+      sonar.jdbc.url: "jdbc:postgresql://postgres/sonar"
+    depends_on: 
+      - postgres
+    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; ./bin/run.sh'
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./temp/postgres/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "admin@01sonarqube"
+      POSTGRES_DB: "sonar"

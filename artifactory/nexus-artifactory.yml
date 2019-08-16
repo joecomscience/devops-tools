@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  nexus-artifactory:
+    image: sonatype/nexus3:3.18.1
+    container_name: artifactory
+    ports:
+     - 8081:8081
+    volumes:
+     - ./temp/artifactory:/nexus-data
+    environment:
+     INSTALL4J_ADD_VM_PARAMS: -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g
